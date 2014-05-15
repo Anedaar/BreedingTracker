@@ -108,8 +108,6 @@ public class SpeciesPanel extends javax.swing.JPanel implements ITrackedSpeciesL
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         labelName = new javax.swing.JLabel();
         panelShow = new javax.swing.JPanel();
@@ -157,11 +155,6 @@ public class SpeciesPanel extends javax.swing.JPanel implements ITrackedSpeciesL
 
         add(panelShow);
 
-        panelDetails.setAlignmentX(0.5F);
-
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, labelSteps, org.jdesktop.beansbinding.ELProperty.create("${preferredSize}"), panelDetails, org.jdesktop.beansbinding.BeanProperty.create("preferredSize"));
-        bindingGroup.addBinding(binding);
-
         panelDetails.setLayout(new javax.swing.BoxLayout(panelDetails, javax.swing.BoxLayout.PAGE_AXIS));
 
         checkFound.setText("found");
@@ -197,8 +190,6 @@ public class SpeciesPanel extends javax.swing.JPanel implements ITrackedSpeciesL
         add(panelDetails);
 
         getAccessibleContext().setAccessibleDescription("");
-
-        bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonShowStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_buttonShowStateChanged
@@ -245,7 +236,6 @@ public class SpeciesPanel extends javax.swing.JPanel implements ITrackedSpeciesL
     private javax.swing.JLabel labelTier;
     private javax.swing.JPanel panelDetails;
     private javax.swing.JPanel panelShow;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
 }

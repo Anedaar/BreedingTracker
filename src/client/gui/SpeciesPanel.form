@@ -79,9 +79,6 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="panelDetails">
-      <BindingProperties>
-        <BindingProperty name="preferredSize" source="labelSteps" sourcePath="${preferredSize}" target="panelDetails" targetPath="preferredSize" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="SpeciesPanel_panelDetails"/>
       </AuxValues>

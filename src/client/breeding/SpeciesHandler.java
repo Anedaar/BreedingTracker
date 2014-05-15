@@ -6,7 +6,6 @@
 package flamefeed.BreedingTracker.src.client.breeding;
 
 import flamefeed.BreedingTracker.src.client.EventLogger;
-import flamefeed.BreedingTracker.src.client.gui.BreedingJFrame;
 import forestry.api.genetics.IAlleleSpecies;
 import forestry.api.genetics.IMutation;
 import forestry.api.genetics.ISpeciesRoot;
