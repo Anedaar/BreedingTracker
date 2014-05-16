@@ -11,6 +11,8 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import flamefeed.BreedingTracker.src.client.gui.BreedingJFrame;
 import flamefeed.BreedingTracker.src.server.ServerProxy;
 
@@ -27,12 +29,14 @@ public class BreedingTracker {
     public static ServerProxy proxy;
 
     @EventHandler
+    @SideOnly(Side.CLIENT)
     public static void preInit(FMLPreInitializationEvent event) {
         
     BreedingJFrame.configFolder = event.getSuggestedConfigurationFile().getParent();
     }
 
     @EventHandler
+    @SideOnly(Side.CLIENT)
     public static void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
         

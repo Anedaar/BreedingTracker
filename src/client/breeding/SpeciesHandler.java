@@ -39,7 +39,7 @@ public abstract class SpeciesHandler {
     private final ISpeciesRoot speciesRoot;
     private final Map<IAlleleSpecies, TrackedSpecies> species;
     public final Set<TrackedSpecies> toDo;
-    private final String saveFile;
+    private String saveFile;
     private boolean init = false;
 
     public SpeciesHandler(ISpeciesRoot root, String save) {
@@ -51,7 +51,9 @@ public abstract class SpeciesHandler {
 
     @Override
     public abstract String toString();
-    
+
+    public abstract String fileName();
+
     public void init() {
 
         Collection<IMutation> mutations = this.speciesRoot.getMutations(true);
@@ -75,11 +77,22 @@ public abstract class SpeciesHandler {
         init = true;
     }
 
+    public void setFile(String name) {
+        this.saveFile = name;
+    }
+
     public void loadFromFile() {
         try {
             if (!init) {
                 return;
             }
+
+            for (Map.Entry entry : this.species.entrySet()) {
+                ((TrackedSpecies) entry.getValue()).setFound(false);
+                ((TrackedSpecies) entry.getValue()).setSerum(false);
+                ((TrackedSpecies) entry.getValue()).setToDo(false);
+            }
+
             BufferedReader br;
             String line;
             String[] value;
@@ -162,10 +175,10 @@ public abstract class SpeciesHandler {
     }
 
     public int getNumDone() {
-        int done=0;
-        
+        int done = 0;
+
         for (Entry<IAlleleSpecies, TrackedSpecies> entry : species.entrySet()) {
-            if(entry.getValue().found==true){
+            if (entry.getValue().found == true) {
                 ++done;
             }
         }
@@ -173,10 +186,10 @@ public abstract class SpeciesHandler {
     }
 
     public Set<Entry<IAlleleSpecies, TrackedSpecies>> getSetDone() {
-        Set done=new HashSet<Entry<IAlleleSpecies, TrackedSpecies>>();
-        
+        Set done = new HashSet<Entry<IAlleleSpecies, TrackedSpecies>>();
+
         for (Entry<IAlleleSpecies, TrackedSpecies> entry : species.entrySet()) {
-            if(entry.getValue().found==true){
+            if (entry.getValue().found == true) {
                 done.add(entry);
             }
         }
@@ -184,10 +197,10 @@ public abstract class SpeciesHandler {
     }
 
     public int getNumToDo() {
-        int done=0;
-        
+        int done = 0;
+
         for (Entry<IAlleleSpecies, TrackedSpecies> entry : species.entrySet()) {
-            if(entry.getValue().toDo==true){
+            if (entry.getValue().toDo == true) {
                 ++done;
             }
         }
@@ -195,10 +208,10 @@ public abstract class SpeciesHandler {
     }
 
     public Set<Entry<IAlleleSpecies, TrackedSpecies>> getSetToDo() {
-        Set done=new HashSet<Entry<IAlleleSpecies, TrackedSpecies>>();
-        
+        Set done = new HashSet<Entry<IAlleleSpecies, TrackedSpecies>>();
+
         for (Entry<IAlleleSpecies, TrackedSpecies> entry : species.entrySet()) {
-            if(entry.getValue().toDo==true){
+            if (entry.getValue().toDo == true) {
                 done.add(entry);
             }
         }
@@ -427,10 +440,10 @@ public abstract class SpeciesHandler {
                     + this.serum + ","
                     + this.toDo;
             if (data.equals("false,false,false")) {
-                EventLogger.logInfo("%s species will not be saved.", new Object[]{this.species.getName()});
+//                EventLogger.logInfo("%s species will not be saved.", new Object[]{this.species.getName()});
                 return null;
             } else {
-                EventLogger.logInfo("Saving: %s,%s", new Object[]{this.species.getName(), data});
+//                EventLogger.logInfo("Saving: %s,%s", new Object[]{this.species.getName(), data});
                 return this.species.getName() + "," + data;
             }
         }

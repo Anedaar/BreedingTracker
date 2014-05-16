@@ -36,13 +36,14 @@ public class ClientKeyHandler extends KeyHandler {
     @Override
     public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd) {
         if (tickEnd && FMLClientHandler.instance().getClient().currentScreen == null) {
-
+           
     //Schedule a job for the event-dispatching thread:
             //creating and showing this application's GUI.
                 javax.swing.SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         BreedingJFrame.getInstance().setTitle("Breeding Tracker");
+                        BreedingJFrame.getInstance().updateFileName();
                         BreedingJFrame.getInstance().setVisible(true);
 //                        window.pack();
                     }
@@ -54,5 +55,5 @@ public class ClientKeyHandler extends KeyHandler {
     public EnumSet<TickType> ticks() {
         return tickTypes;
     }
-
+    
 }

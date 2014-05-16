@@ -25,4 +25,9 @@ public class TreeSpeciesHandler extends SpeciesHandler{
         return "Trees";
     }
     
+    @Override
+    public String fileName(){
+        return "trees.dat";
+    }
+    
 }

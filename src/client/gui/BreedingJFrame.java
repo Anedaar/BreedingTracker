@@ -6,7 +6,8 @@
 package flamefeed.BreedingTracker.src.client.gui;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.server.FMLServerHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import flamefeed.BreedingTracker.src.client.EventLogger;
 import flamefeed.BreedingTracker.src.client.breeding.SpeciesHandler;
 import flamefeed.BreedingTracker.src.client.breeding.SpeciesHandler.TrackedSpecies;
@@ -15,9 +16,12 @@ import flamefeed.BreedingTracker.src.client.breeding.butterflys.ButterflySpecies
 import flamefeed.BreedingTracker.src.client.breeding.trees.TreeSpeciesHandler;
 import forestry.api.genetics.IAlleleSpecies;
 import java.io.File;
-import java.util.HashMap;
+import java.lang.reflect.Field;
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.logging.Level;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
 
 /**
  *
@@ -26,11 +30,12 @@ import java.util.logging.Level;
 public class BreedingJFrame extends javax.swing.JFrame {
 
     public static String configFolder;
+    private static String configFile;
     private static final String modFolder = "BreedingTracker";
     private static final String localFolder = "local";
     private static final String remoteFolder = "server";
+    private boolean fileUpdated=false;
 
-    private int init = 0;
 
     private static BreedingJFrame instance;
     private SpeciesHandler handler;
@@ -49,19 +54,7 @@ public class BreedingJFrame extends javax.swing.JFrame {
     private BreedingJFrame() {
         initComponents();
 
-        //fileNames
-        String configFile = configFolder + File.separator + modFolder + File.separator;
-
-        if (FMLServerHandler.instance().getServer() != null) {
-            configFile = configFile + remoteFolder + File.separator
-                    + FMLServerHandler.instance().getServer().getHostname() + "."
-                    + FMLServerHandler.instance().getServer().getPort() + ".";
-        } else {
-            configFile = configFile + localFolder + File.separator
-                    + FMLClientHandler.instance().getClient().getIntegratedServer().getFolderName() + ".";
-        }
-
-        EventLogger.log(Level.INFO, configFile);
+        updateFileName(false);
 
         //Handlers
         SpeciesHandler newHandler;
@@ -73,6 +66,7 @@ public class BreedingJFrame extends javax.swing.JFrame {
         newHandler = new ButterflySpeciesHandler(configFile + "butterflies.dat");
         this.comboSpeciesRoot.addItem(newHandler);
         newHandler = null;
+        fileUpdated=true;
 
         panelMutation = new MutationPanel(null);
         jScrollPane1.setViewportView(panelMutation);
@@ -80,9 +74,95 @@ public class BreedingJFrame extends javax.swing.JFrame {
         fillAllSpecies();
 
         handler.loadFromFile();
-        
-        updateOverview(); 
 
+        updateOverview();
+
+    }
+    
+    public void updateFileName(){
+        updateFileName(true);
+    }
+
+    private void updateFileName(boolean updateHandlers) {
+        if (fileUpdated)
+            return;
+
+        //fileNames
+        configFile = configFolder + File.separator + modFolder + File.separator;
+        String serverName = getServerName();
+
+        if (FMLClientHandler.instance().getClient() != null && 
+                FMLClientHandler.instance().getClient().getIntegratedServer() != null ) {
+            configFile = configFile + localFolder + File.separator
+                    + FMLClientHandler.instance().getClient().getIntegratedServer().getFolderName() + ".";
+        } else if (serverName != null) {
+            configFile = configFile + remoteFolder + File.separator + serverName + ".";
+        } else {
+            configFile = configFile + "default.";
+        }
+
+        EventLogger.log(Level.INFO, configFile);
+
+        if (updateHandlers) {
+            for (int i = 0; i < this.comboSpeciesRoot.getItemCount(); i++) {
+                Object item = this.comboSpeciesRoot.getItemAt(i);
+                if(item instanceof SpeciesHandler){
+                    ((SpeciesHandler)item).setFile(configFile+((SpeciesHandler)item).fileName());
+                    ((SpeciesHandler)item).loadFromFile();
+                }
+            }
+            
+            updateOverview();
+            fillAllSpecies();
+            fillToDoSpecies();
+        }
+    }
+
+    private String getServerName() {
+        try {
+            ServerData serverData = null;
+            Object serverDataObj = getServerData();
+            if (serverDataObj != null) {
+                serverData = (ServerData) serverDataObj;
+            }
+            if (serverData != null) {
+//          EventLogger.logChat("serverName: "+serverData.serverName);
+//          EventLogger.logChat("serverIP: "+serverData.serverIP);
+//          EventLogger.logChat("serverMOTD: "+serverData.serverMOTD);
+                return serverData.serverIP;
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    private Object getServerData() {
+        Minecraft mc = FMLClientHandler.instance().getClient();
+
+        if (mc == null) {
+            EventLogger.logChat("MC is null");
+            return null;
+        }
+
+        Class minecraft = mc.getClass();
+        Class fieldClasstype;
+        try {
+            fieldClasstype = Class.forName("net.minecraft.client.multiplayer.ServerData");
+        } catch (ClassNotFoundException ex) {
+            return null;
+        }
+
+        Field[] fields = minecraft.getDeclaredFields();
+        for (int i = 0; i < fields.length; i++) {
+            if (fieldClasstype.equals(fields[i].getType())) {
+                try {
+                    fields[i].setAccessible(true);
+                    return fields[i].get(mc);
+                } catch (IllegalAccessException ex) {
+                }
+            }
+        }
+        return null;
     }
 
     public SpeciesHandler getHandler() {
@@ -259,6 +339,7 @@ public class BreedingJFrame extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         handler.saveToFile();
+        fileUpdated=false;
     }//GEN-LAST:event_formWindowClosed
 
     private void comboSpeciesRootItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSpeciesRootItemStateChanged

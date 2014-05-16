@@ -25,4 +25,9 @@ public class ButterflySpeciesHandler extends SpeciesHandler{
         return "Butterflies";
     }
     
+    @Override
+    public String fileName(){
+        return "butterflies.dat";
+    }
+    
 }

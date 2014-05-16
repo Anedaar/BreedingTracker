@@ -24,4 +24,9 @@ public class BeeSpeciesHandler extends SpeciesHandler{
     public String toString(){
         return "Bees";
     }
+    
+    @Override
+    public String fileName(){
+        return "bees.dat";
+    }
 }

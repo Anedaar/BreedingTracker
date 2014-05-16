@@ -5,11 +5,10 @@
  */
 package flamefeed.BreedingTracker.src.client;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import cpw.mods.fml.common.FMLLog;
-import java.util.HashMap;
-import net.minecraft.command.ICommandSender;
 
 /**
  *
@@ -17,9 +16,7 @@ import net.minecraft.command.ICommandSender;
  */
 public class EventLogger {
 
-    private static final Logger logger = Logger.getLogger("FlameProtect");
-
-    private static final HashMap<ICommandSender, Byte> subscribers = new HashMap();
+    private static final Logger logger = Logger.getLogger("BreedingTracker");
 
     public static void init() {
         logger.setParent(FMLLog.getLogger());
@@ -37,7 +34,10 @@ public class EventLogger {
         logger.log(logLevel, message);
     }
 
-    public static void subscribe(ICommandSender sender, Byte n) {
-        subscribers.put(sender, n);
+    public static void logChat(String message) {
+        try {
+            FMLClientHandler.instance().getClient().thePlayer.addChatMessage(message);
+        } catch (NullPointerException ex) {
+        }
     }
 }
